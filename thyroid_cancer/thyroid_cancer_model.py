@@ -15,22 +15,23 @@ df = pd.read_csv("cancer_dataset.csv")
 
 # preprocess data & vectorize document text
 def preprocessCancer(df):
-    df["cancer"] = np.where(df["cancer"] == "Thyroid_Cancer", 1, 0)
-    return df["cancer"]
+    df.drop("id", axis=1, inplace=True)
+    df["cancer_type"] = np.where(df["cancer_type"] == "Thyroid_Cancer", 1, 0)
+    return df["cancer_type"]
 
 def preprocessResearch(df):
     vectorizer = TfidfVectorizer(max_features=5000)
-    tfidf_matrix = vectorizer.fit_transform(df["research"])
-    return tfidf_matrix
+    tfidf_matrix = vectorizer.fit_transform(df["research_document"])
+    return tfidf_matrix, vectorizer
 
 # feature selection
 
 def featureSelection(df):
-    X = preprocessResearch(df)
+    X, vectorizer = preprocessResearch(df)
     y = preprocessCancer(df)
-    return X, y
+    return X, y, vectorizer
 
-X, y = featureSelection(df)
+X, y, vectorizer = featureSelection(df)
 
 # scale & normalize
 X_train, X_test, Y_train, Y_test = train_test_split(X, y, test_size=0.25, random_state=16)
@@ -68,4 +69,14 @@ print(accuracy)
 print("----matrix----")
 print(matrix)
 
+# save model ang dump
+
+with open("thyroid_cancer_model.pkl", "wb") as f:
+    pickle.dump(model, f)
+
+with open("scaler.pkl", "wb") as f: 
+    pickle.dump(scaler, f)
+
+with open("vectorizer.pkl", "wb") as f:
+    pickle.dump(vectorizer, f)
 

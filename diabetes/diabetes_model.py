@@ -69,7 +69,7 @@ print(matrix)
 
 
 with open('diabetes_model.pkl', 'wb') as f:
-        pickle.dump(model, f)
+    pickle.dump(model, f)
 with open('scaler.pkl', 'wb') as f:
     pickle.dump(scalar, f)
 print("--- nothing follows ---")
